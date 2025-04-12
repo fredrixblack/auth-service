@@ -11,6 +11,7 @@
       "passport-jwt": "^4.0.1",
       "jsonwebtoken": "^9.0.2",
       "pg": "^8.11.3",
-      "dotenv": "^16.4.5"
+      "dotenv": "^16.4.5",
+      "cors":"^2.8.5"
     }
   }

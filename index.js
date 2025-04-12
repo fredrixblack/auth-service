@@ -5,10 +5,12 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const pool = new Pool({
     host: process.env.DB_HOST,
