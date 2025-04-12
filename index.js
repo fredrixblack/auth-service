@@ -50,7 +50,7 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' }
 });
-app.use('/api/', apiLimiter); // Apply rate limiting to all API routes
+app.use('/', apiLimiter); // Apply rate limiting to all API routes
 
 // Set up database connection
 const pool = new Pool({
@@ -321,7 +321,7 @@ function setupRoutes() {
     
     // User registration
     app.post(
-        '/api/register',
+        '/register',
         [
             body('email')
                 .isLength({ min: 3, max: 50 })
@@ -379,7 +379,7 @@ function setupRoutes() {
 
     // User login with remember me option
     app.post(
-        '/api/login',
+        '/login',
         [
             body('email').notEmpty().withMessage('email is required'),
             body('password').notEmpty().withMessage('Password is required'),
@@ -405,9 +405,9 @@ function setupRoutes() {
                 );
                 
                 const user = rows[0];
-                
+                console.log(email,rows)
                 // Check if user exists and password is correct
-                if (!user || !(await bcrypt.compare(password, user.password))) {
+                if (!user || !(await bcrypt.compare( password,user.password))) {
                     await recordLoginAttempt(email, ipAddress, userAgent, false);
                     return res.status(401).json({ error: 'Invalid credentials' });
                 }
@@ -465,7 +465,7 @@ function setupRoutes() {
 
     // Refresh token
     app.post(
-        '/api/refresh-token',
+        '/refresh-token',
         [
             body('refreshToken').notEmpty().withMessage('Refresh token is required')
         ],
@@ -549,7 +549,7 @@ function setupRoutes() {
 
     // Logout
     app.post(
-        '/api/logout',
+        '/logout',
         [
             body('refreshToken').notEmpty().withMessage('Refresh token is required')
         ],
@@ -572,7 +572,7 @@ function setupRoutes() {
 
     // Logout from all devices
     app.post(
-        '/api/logout-all',
+        '/logout-all',
         passport.authenticate('jwt', { session: false }),
         async (req, res, next) => {
             try {
@@ -593,7 +593,7 @@ function setupRoutes() {
 
     // List active sessions
     app.get(
-        '/api/active-sessions',
+        '/active-sessions',
         passport.authenticate('jwt', { session: false }),
         async (req, res, next) => {
             try {
@@ -638,7 +638,7 @@ function setupRoutes() {
 
     // Revoke specific session
     app.delete(
-        '/api/sessions/:sessionId',
+        '/sessions/:sessionId',
         passport.authenticate('jwt', { session: false }),
         async (req, res, next) => {
             try {
@@ -664,7 +664,7 @@ function setupRoutes() {
 
     // Protected route example
     app.get(
-        '/api/profile',
+        '/profile',
         passport.authenticate('jwt', { session: false }),
         (req, res) => {
             res.json({
@@ -680,7 +680,7 @@ function setupRoutes() {
 
     // Admin only route example
     app.get(
-        '/api/admin',
+        '/admin',
         passport.authenticate('jwt', { session: false }),
         (req, res) => {
             if (req.user.role !== 'admin') {
@@ -696,7 +696,7 @@ function setupRoutes() {
 
     // Password change route
     app.put(
-        '/api/change-password',
+        '/change-password',
         passport.authenticate('jwt', { session: false }),
         [
             body('currentPassword').notEmpty().withMessage('Current password is required'),
@@ -762,7 +762,7 @@ function setupRoutes() {
 
     // Update user profile
     app.put(
-        '/api/profile',
+        '/profile',
         passport.authenticate('jwt', { session: false }),
         [
             body('email')
